@@ -1,0 +1,7 @@
+---
+# defaults file for git-config
+GITCFG_NAME:
+GITCFG_USER:
+GITCFG_EMAIL:
+GITCFG_PASSWORD: 
+GITCFG_KEYTYPE: rsa

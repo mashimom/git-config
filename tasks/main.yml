@@ -1,0 +1,80 @@
+---
+# tasks file for git-config
+- fail:
+    msg: missing value for GITCFG_NAME
+  when: GITCFG_NAME is not defined
+
+- fail:
+    msg: missing value for GITCFG_USER
+  when: GITCFG_USER is not defined
+
+- fail:
+    msg: missing value for GITCFG_EMAIL
+  when: GITCFG_EMAIL is not defined
+
+- fail:
+    msg: missing value for GITCFG_PASSWORD
+  when: GITCFG_PASSWORD is not defined
+
+- name: install git and tools
+  apt:
+    name: "{{ item }}"
+    install_recommends: yes
+    update_cache: yes
+    cache_valid_time: 3600
+    autoclean: yes
+    autoremove: yes
+  become: yes
+  with_items:
+    - git
+  when: ansible_pkg_mgr == 'apt'
+
+- name: creates user's ssh key pair
+  user:
+    name: "{{ GITCFG_USER }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_comment: "{{ GITCFG_EMAIL }}"
+    ssh_key_passphrase: "{{ GITCFG_PASSWORD }}"
+    ssh_key_type: "{{ GITCFG_KEYTYPE }}"
+  become: yes
+
+- name: git user name
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{ GITCFG_NAME }}"
+
+- name: git user email
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{ GITCFG_EMAIL }}"
+
+- name: git push
+  git_config:
+    name: push.default
+    scope: global
+    value: current
+
+- name: git merge conflict
+  git_config:
+    name: merge.conflictstyle
+    scope: global
+    value: diff3
+
+- name: git autocrlf
+  git_config:
+    name: core.autocrlf
+    scope: global
+    value: input
+
+- name: git attributes dir pre-condition
+  file:
+    path: "~{{ GITCFG_USER }}/.config/git"
+    state: directory
+
+- name: git default file attributes
+  template:
+    src: attributes.j2
+    dest: "~{{ GITCFG_USER }}/.config/git/attributes"
