@@ -1,38 +1,54 @@
-Role Name
-=========
+# Installs and configures git
 
-A brief description of the role goes here.
+The role will install git from repos, then will create ssh key pair if missing, next configure sensible defaults like user, email and push style, merge conflict to 3-way, line ending and git attribute defaults from template.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Currently work with apt, tested on Ubuntu and Ubuntu bash for Windows.
 
 Role Variables
 --------------
+Any missing value causes role failure.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+| Variable name | default value | required | advised to encrypt in host_var vault |
+| -- | -- | -- | -- |
+| `GITCFG_NAME` | | yes | no |
+| `GITCFG_USER` | | yes | no |
+| `GITCFG_EMAIL` | | yes | no |
+| `GITCFG_PASSWORD` |  | yes | yes |
+| `GITCFG_KEYTYPE` | rsa | yes | no |
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+No dependencies.
 
 Example Playbook
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+    
+    ---
+    - hosts: localhost
+     
       roles:
-         - { role: username.rolename, x: 42 }
+        - role: git-config
+          GITCFG_NAME: Scott Summers
+          GITCFG_USER: scott
+          GITCFG_EMAIL: cyclops@xmen.com
+          
+Host vars contains password `host_vars/localhost`:
 
+    GITCFG_PASSWORD: jeangrey
+    
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+@mashimom
